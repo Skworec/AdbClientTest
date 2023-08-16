@@ -1,0 +1,147 @@
+﻿<Window x:Class="AdbClientTest.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:fa="http://schemas.fontawesome.io/icons/"
+        xmlns:viewmodel="clr-namespace:AdbClientTest.ViewModel"
+        xmlns:converters="clr-namespace:AdbClientTest.Converters"
+        mc:Ignorable="d"
+        Title="AndroidTest" MinWidth="260"
+        SizeToContent="WidthAndHeight">
+    <Window.Resources>
+        <ResourceDictionary>
+            <converters:IsStringNullOrEmptyConverter x:Key="IsStringNullOrEmptyConverter"/>
+            <converters:AndMultiValueBoolConverter x:Key="AndMultiValueBoolConverter"/>
+            <converters:OrMultiValueBoolConverter x:Key="OrMultiValueBoolConverter"/>
+            <converters:IsTestStatusInProgressConverter x:Key="IsTestStatusInProgressConverter"/>
+        </ResourceDictionary>
+    </Window.Resources>
+    <StackPanel>
+        <Menu Height="25" VerticalAlignment="Top">
+            <MenuItem Header="Actions">
+                <MenuItem Header="Choose ADB path" Command="{Binding ButtonChooseADBPathCommand}"/>
+                <MenuItem Header="Connect by IP" Command="{Binding ButtonConnectByIPCommand}"/>
+            </MenuItem>
+        </Menu>
+        <Grid>
+            <Grid.RowDefinitions>
+                <RowDefinition/>
+                <RowDefinition/>
+                <RowDefinition/>
+                <RowDefinition/>
+            </Grid.RowDefinitions>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition/>
+                <ColumnDefinition/>
+            </Grid.ColumnDefinitions>
+            <Label Content="Connected device" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="5"/>
+            <Label Content="{Binding Path=DeviceInfo.Name, UpdateSourceTrigger=PropertyChanged}" HorizontalAlignment="Center" VerticalAlignment="Center" Margin="5" Grid.Row="0" Grid.Column="1"/>
+            <DockPanel Grid.Row="1">
+                <Button Content="{Binding Path=TestViewModel1.Name}" HorizontalAlignment="Left" Margin="5" VerticalAlignment="Center" Command="{Binding ButtonRunTest1Command}">
+                    <Button.Style>
+                        <Style TargetType="{x:Type Button}">
+                            <Setter Property="IsEnabled" Value="True"/>
+                            <!-- default value -->
+                            <Style.Triggers>
+                                <MultiDataTrigger>
+                                    <MultiDataTrigger.Conditions>
+                                        <Condition Value="True">
+                                            <Condition.Binding>
+                                                <MultiBinding Converter="{StaticResource OrMultiValueBoolConverter}">
+                                                    <Binding Path="TestViewModel1.Status" Converter="{StaticResource IsTestStatusInProgressConverter}" UpdateSourceTrigger="PropertyChanged"/>
+                                                    <Binding Path="TestViewModel2.Status" Converter="{StaticResource IsTestStatusInProgressConverter}" UpdateSourceTrigger="PropertyChanged"/>
+                                                    <Binding Path="DeviceInfo.Name" Converter="{StaticResource IsStringNullOrEmptyConverter}" UpdateSourceTrigger="PropertyChanged"/>
+                                                    <Binding Path="AdbExePath" Converter="{StaticResource IsStringNullOrEmptyConverter}" UpdateSourceTrigger="PropertyChanged"/>
+                                                </MultiBinding>
+                                            </Condition.Binding>
+                                        </Condition>
+                                    </MultiDataTrigger.Conditions>
+                                    <Setter Property="IsEnabled" Value="False"/>
+                                </MultiDataTrigger>
+                            </Style.Triggers>
+                        </Style>
+                    </Button.Style>
+                </Button>
+                <fa:ImageAwesome Height="20" Width="20">
+                    <fa:ImageAwesome.Style>
+                        <Style TargetType="{x:Type fa:ImageAwesome}">
+                            <Setter Property="Visibility" Value="Collapsed"/>
+                            <!-- default value -->
+                            <Style.Triggers>
+                                <DataTrigger Binding="{Binding Path=TestViewModel1.Status, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" Value="{x:Static viewmodel:TestStatus.InProgress}">
+                                    <Setter Property="Visibility" Value="Visible" />
+                                    <Setter Property="Icon" Value="Refresh"/>
+                                    <Setter Property="Spin" Value="True"/>
+                                </DataTrigger>
+                                <DataTrigger Binding="{Binding Path=TestViewModel1.Status, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" Value="{x:Static viewmodel:TestStatus.Success}">
+                                    <Setter Property="Visibility" Value="Visible" />
+                                    <Setter Property="Icon" Value="Check"/>
+                                    <Setter Property="Spin" Value="False"/>
+                                </DataTrigger>
+                                <DataTrigger Binding="{Binding Path=TestViewModel1.Status, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" Value="{x:Static viewmodel:TestStatus.Failed}">
+                                    <Setter Property="Visibility" Value="Visible" />
+                                    <Setter Property="Icon" Value="Ban"/>
+                                    <Setter Property="Spin" Value="False"/>
+                                </DataTrigger>
+                            </Style.Triggers>
+                        </Style>
+                    </fa:ImageAwesome.Style>
+                </fa:ImageAwesome>
+            </DockPanel>
+            <DockPanel Grid.Row="2">
+                <Button Content="{Binding Path=TestViewModel2.Name}" HorizontalAlignment="Left" Margin="5" VerticalAlignment="Center" Command="{Binding ButtonRunTest2Command}" Grid.Row="2">
+                    <Button.Style>
+                        <Style TargetType="{x:Type Button}">
+                            <Setter Property="IsEnabled" Value="True"/>
+                            <!-- default value -->
+                            <Style.Triggers>
+                                <MultiDataTrigger>
+                                    <MultiDataTrigger.Conditions>
+                                        <Condition Value="True">
+                                            <Condition.Binding>
+                                                <MultiBinding Converter="{StaticResource OrMultiValueBoolConverter}">
+                                                    <Binding Path="TestViewModel1.Status" Converter="{StaticResource IsTestStatusInProgressConverter}" UpdateSourceTrigger="PropertyChanged"/>
+                                                    <Binding Path="TestViewModel2.Status" Converter="{StaticResource IsTestStatusInProgressConverter}" UpdateSourceTrigger="PropertyChanged"/>
+                                                    <Binding Path="DeviceInfo.Name" Converter="{StaticResource IsStringNullOrEmptyConverter}" UpdateSourceTrigger="PropertyChanged"/>
+                                                    <Binding Path="AdbExePath" Converter="{StaticResource IsStringNullOrEmptyConverter}" UpdateSourceTrigger="PropertyChanged"/>
+                                                </MultiBinding>
+                                            </Condition.Binding>
+                                        </Condition>
+                                    </MultiDataTrigger.Conditions>
+                                    <Setter Property="IsEnabled" Value="False"/>
+                                </MultiDataTrigger>
+                            </Style.Triggers>
+                        </Style>
+                    </Button.Style>
+                </Button>
+                <fa:ImageAwesome Height="20" Width="20">
+                    <fa:ImageAwesome.Style>
+                        <Style TargetType="{x:Type fa:ImageAwesome}">
+                            <Setter Property="Visibility" Value="Collapsed"/>
+                            <!-- default value -->
+                            <Style.Triggers>
+                                <DataTrigger Binding="{Binding Path=TestViewModel2.Status, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" Value="{x:Static viewmodel:TestStatus.InProgress}">
+                                    <Setter Property="Visibility" Value="Visible" />
+                                    <Setter Property="Icon" Value="Refresh"/>
+                                    <Setter Property="Spin" Value="True"/>
+                                </DataTrigger>
+                                <DataTrigger Binding="{Binding Path=TestViewModel2.Status, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" Value="{x:Static viewmodel:TestStatus.Success}">
+                                    <Setter Property="Visibility" Value="Visible" />
+                                    <Setter Property="Icon" Value="Check"/>
+                                    <Setter Property="Spin" Value="False"/>
+                                </DataTrigger>
+                                <DataTrigger Binding="{Binding Path=TestViewModel2.Status, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" Value="{x:Static viewmodel:TestStatus.Failed}">
+                                    <Setter Property="Visibility" Value="Visible" />
+                                    <Setter Property="Icon" Value="Ban"/>
+                                    <Setter Property="Spin" Value="False"/>
+                                </DataTrigger>
+                            </Style.Triggers>
+                        </Style>
+                    </fa:ImageAwesome.Style>
+                </fa:ImageAwesome>
+            </DockPanel>
+            <Label Content="By Nikita Lobzov" HorizontalAlignment="Center" Margin="5" VerticalAlignment="Center" Grid.Row="3" Grid.Column="1"/>
+        </Grid>
+    </StackPanel>
+</Window>
