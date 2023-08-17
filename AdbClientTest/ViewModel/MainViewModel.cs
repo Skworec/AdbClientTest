@@ -25,6 +25,11 @@ namespace AdbClientTest
             typeof(ADBDeviceInfo),
             typeof(MainWindow));
 
+        public static readonly DependencyProperty BorwserRequestProperty = DependencyProperty.Register(
+            "BorwserRequest",
+            typeof(string),
+            typeof(MainWindow), new PropertyMetadata(""));
+
         public string AdbExePath
         {
             get { return (string)GetValue(AdbExePathProperty); }
@@ -50,6 +55,11 @@ namespace AdbClientTest
             get { return (ADBDeviceInfo)GetValue(DeviceInfoProperty); }
             set { SetValue(DeviceInfoProperty, value); OnPropertyChanged("DeviceInfo.Name"); }
         }
+        public string BrowserRequest
+        {
+            get { return (string)GetValue(BorwserRequestProperty); }
+            set { SetValue(BorwserRequestProperty, value); OnPropertyChanged(); }
+        }
 
         public MainViewModel()
         {
@@ -65,19 +75,29 @@ namespace AdbClientTest
 
         private async Task<object> RunTest1()
         {
+            var watch = new System.Diagnostics.Stopwatch();
+            watch.Start();
             _adbClient.HomeBtn();
 
             await _adbClient.CloseRecentAppsAsync();
 
             _adbClient.MenuBtn();
 
-            return await _adbClient.TakeScrennshotAsync();
+            var image = await _adbClient.TakeScrennshotAsync();
+            watch.Stop();
+            var result = new List<object>();
+            result.Add(image);
+            result.Add($"Execution time: {watch.ElapsedMilliseconds} ms");
+            return result;
         }
 
         private async Task<object> RunTest2()
         {
+            var watch = new System.Diagnostics.Stopwatch();
+            watch.Start();
             _adbClient.HomeBtn();
             _adbClient.HomeBtn();
+            var result = new List<object>();
 
             if (!await _adbClient.TryOpenAppOnScreenAsync("Chrome"))
             {
@@ -100,25 +120,35 @@ namespace AdbClientTest
 
             Trace.WriteLine(searchBarCoords.ToString());
             _adbClient.Touch(searchBarCoords);
-            _adbClient.WriteLine("My ip address");
-            await Task.Delay(5000); //Wait browser load result
-            doc = await _adbClient.DumpScreenXMLAsync();
-            var ipRegex = new Regex("\\b(?:\\d{1,3}\\.){3}\\d{1,3}\\b");
-            var ipNode = ADBClient.FindElementOnScreenXMLByAttribute(doc, "text", "Your public IP address").
-                Parent.Elements().
-                Where((x) =>
-                {
-                    return ipRegex.IsMatch(x.Attribute("text").Value);
-                }).FirstOrDefault();
-            if (ipNode != null)
+            _adbClient.WriteLine(BrowserRequest);
+            await Task.Delay(3500); //Wait browser load result
+            if (BrowserRequest.ToLower() == "my ip address")
             {
-                var ip = ipNode.Attribute("text").Value;
-                return new List<object> { "Device ip Address", ip };
+                doc = await _adbClient.DumpScreenXMLAsync();
+                var ipRegex = new Regex("\\b(?:\\d{1,3}\\.){3}\\d{1,3}\\b");
+                var ipNode = ADBClient.FindElementOnScreenXMLByAttribute(doc, "text", "Your public IP address").
+                    Parent.Elements().
+                    Where((x) =>
+                    {
+                        return ipRegex.IsMatch(x.Attribute("text").Value);
+                    }).FirstOrDefault();
+                if (ipNode != null)
+                {
+                    var ip = ipNode.Attribute("text").Value;
+                    result.AddRange(new List<object> { "Device ip Address", ip });
+                }
+                else
+                {
+                    result.Add("Browser did not show IP");
+                }
             }
             else
             {
-                return "Browser did not show IP";
+                result.Add(await _adbClient.TakeScrennshotAsync());
             }
+            watch.Stop();
+            result.Add($"Execution time: {watch.ElapsedMilliseconds} ms");
+            return result;
         }
 
         private void OpenConnectByIpWindow()

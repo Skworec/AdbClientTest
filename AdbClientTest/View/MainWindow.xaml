@@ -18,15 +18,17 @@
         </ResourceDictionary>
     </Window.Resources>
     <StackPanel>
-        <Menu Height="25" VerticalAlignment="Top">
+        <Menu Height="Auto">
             <MenuItem Header="Actions">
                 <MenuItem Header="Choose ADB path" Command="{Binding ButtonChooseADBPathCommand}"/>
                 <MenuItem Header="Connect by IP" Command="{Binding ButtonConnectByIPCommand}"/>
             </MenuItem>
+            <MenuItem Header="By">
+                <MenuItem Header="Nikita Lobzov" IsEnabled="False"/>
+            </MenuItem>
         </Menu>
         <Grid>
             <Grid.RowDefinitions>
-                <RowDefinition/>
                 <RowDefinition/>
                 <RowDefinition/>
                 <RowDefinition/>
@@ -49,10 +51,10 @@
                                         <Condition Value="True">
                                             <Condition.Binding>
                                                 <MultiBinding Converter="{StaticResource OrMultiValueBoolConverter}">
-                                                    <Binding Path="TestViewModel1.Status" Converter="{StaticResource IsTestStatusInProgressConverter}" UpdateSourceTrigger="PropertyChanged"/>
-                                                    <Binding Path="TestViewModel2.Status" Converter="{StaticResource IsTestStatusInProgressConverter}" UpdateSourceTrigger="PropertyChanged"/>
-                                                    <Binding Path="DeviceInfo.Name" Converter="{StaticResource IsStringNullOrEmptyConverter}" UpdateSourceTrigger="PropertyChanged"/>
-                                                    <Binding Path="AdbExePath" Converter="{StaticResource IsStringNullOrEmptyConverter}" UpdateSourceTrigger="PropertyChanged"/>
+                                                    <Binding Path="TestViewModel1.Status" Converter="{StaticResource IsTestStatusInProgressConverter}"/>
+                                                    <Binding Path="TestViewModel2.Status" Converter="{StaticResource IsTestStatusInProgressConverter}"/>
+                                                    <Binding Path="DeviceInfo.Name" Converter="{StaticResource IsStringNullOrEmptyConverter}"/>
+                                                    <Binding Path="AdbExePath" Converter="{StaticResource IsStringNullOrEmptyConverter}"/>
                                                 </MultiBinding>
                                             </Condition.Binding>
                                         </Condition>
@@ -101,10 +103,11 @@
                                         <Condition Value="True">
                                             <Condition.Binding>
                                                 <MultiBinding Converter="{StaticResource OrMultiValueBoolConverter}">
-                                                    <Binding Path="TestViewModel1.Status" Converter="{StaticResource IsTestStatusInProgressConverter}" UpdateSourceTrigger="PropertyChanged"/>
-                                                    <Binding Path="TestViewModel2.Status" Converter="{StaticResource IsTestStatusInProgressConverter}" UpdateSourceTrigger="PropertyChanged"/>
-                                                    <Binding Path="DeviceInfo.Name" Converter="{StaticResource IsStringNullOrEmptyConverter}" UpdateSourceTrigger="PropertyChanged"/>
-                                                    <Binding Path="AdbExePath" Converter="{StaticResource IsStringNullOrEmptyConverter}" UpdateSourceTrigger="PropertyChanged"/>
+                                                    <Binding Path="TestViewModel1.Status" Converter="{StaticResource IsTestStatusInProgressConverter}"/>
+                                                    <Binding Path="TestViewModel2.Status" Converter="{StaticResource IsTestStatusInProgressConverter}"/>
+                                                    <Binding Path="DeviceInfo.Name" Converter="{StaticResource IsStringNullOrEmptyConverter}"/>
+                                                    <Binding Path="AdbExePath" Converter="{StaticResource IsStringNullOrEmptyConverter}"/>
+                                                    <Binding Path="BrowserRequest" Converter="{StaticResource IsStringNullOrEmptyConverter}"/>
                                                 </MultiBinding>
                                             </Condition.Binding>
                                         </Condition>
@@ -141,7 +144,7 @@
                     </fa:ImageAwesome.Style>
                 </fa:ImageAwesome>
             </DockPanel>
-            <Label Content="By Nikita Lobzov" HorizontalAlignment="Center" Margin="5" VerticalAlignment="Center" Grid.Row="3" Grid.Column="1"/>
+            <TextBox Text="{Binding Path=BrowserRequest, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Grid.Row="2" Grid.Column="1" Margin="3" VerticalAlignment="Center"/>
         </Grid>
     </StackPanel>
 </Window>

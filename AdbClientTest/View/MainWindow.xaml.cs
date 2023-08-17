@@ -11,11 +11,11 @@ namespace AdbClientTest
         public MainWindow()
         {
             InitializeComponent();
-            this.Loaded += OnLoaded;
+            this.ContentRendered += OnContentRendered;
             DataContext = new MainViewModel();
         }
 
-        private void OnLoaded(object? sender, EventArgs e)
+        private void OnContentRendered(object? sender, EventArgs e)
         {
             this.MinHeight = this.MaxHeight = this.Height;
             this.MinWidth = this.MaxWidth = this.Width;
